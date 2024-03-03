@@ -26,6 +26,9 @@ const userType = gql`
         description: String!
         comments: [Comment!]
         likes: [Like!]
+        fileUrl: String!
+        username: String!
+        category: String!
     }
 
     input PublicationInput {

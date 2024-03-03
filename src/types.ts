@@ -13,7 +13,10 @@ export type Publication = {
     fileId: number,
     userId: number,
     dateTime: Date,
-    description: string
+    description: string,
+    fileUrl: string,
+    username: string, 
+    category: string
 };
 
 export type Comment = {
