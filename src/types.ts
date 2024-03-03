@@ -32,3 +32,13 @@ export type Like = {
     userId: number,
     publicationId: number
 };
+
+export type Story = {
+    id: number,
+    userId: number,
+    fileId: number,
+    dateTime: Date,
+    view: number,
+    fileUrl: string,
+    username: string, 
+};

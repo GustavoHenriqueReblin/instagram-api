@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-const userType = gql`
+const publicationType = gql`
     scalar DateTime
 
     type Like {
@@ -47,4 +47,4 @@ const userType = gql`
     }
 `;
 
-module.exports = userType;
+module.exports = publicationType;
