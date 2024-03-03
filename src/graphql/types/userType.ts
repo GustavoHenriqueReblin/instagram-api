@@ -20,6 +20,7 @@ const userType = gql`
     type UserResponse {
         data: [User]
         message: String
+        error: String
     }
 
     type Query {

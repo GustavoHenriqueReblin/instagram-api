@@ -1,10 +1,12 @@
 import { User } from '../types';
 import { Conn } from '../db/Conn';
+import { generateToken } from '../helper/userHelper';
 
 export const getUser = async (email: string, password: string) => {
-    const query = 'SELECT * FROM `user` WHERE email = ? AND password = ? LIMIT 1';
+    const query = 'SELECT * FROM `user` WHERE email = ? AND password = SHA1(?) LIMIT 1';
     const [user] = await Conn.execute(query, [email, password]);
-    return user[0] as User;
+    const userWithToken = await generateToken(user[0]);
+    return userWithToken as User;
 };
 
 export const getUserById = async (id: number) => {
