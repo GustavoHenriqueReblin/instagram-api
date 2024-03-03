@@ -9,11 +9,12 @@ export const getPublications = async (userId: number) => {
         'INNER JOIN `user` u ON u.id = p.userId ' +
         'INNER JOIN `person` pe ON pe.id = u.personId ' +
         'INNER JOIN `category` c ON c.id = p.categoryId ' +
+        'LEFT JOIN `publication_view` pv ON pv.publicationId = p.id AND pv.userId = ? ' +
         'WHERE p.`userId` IN ( ' +
             'SELECT f.`idUserFollowed` FROM `follow` f ' +
             'WHERE f.`idUser` = ? ' +
-        ') AND p.`dateTime` BETWEEN (CURDATE() - 2) AND NOW()';
-    const [publications] = await Conn.execute(query, [userId]);
+        ') AND p.`dateTime` BETWEEN (CURDATE() - 2) AND NOW() AND pv.`view` IS NULL';
+    const [publications] = await Conn.execute(query, [userId, userId]);
     return publications as Publication[];
 };
 
