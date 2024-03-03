@@ -1,12 +1,14 @@
 const userResolver = require('./resolvers/userResolver');
 const userTypeSchema = require('./types/userType');
+const publicationResolver = require('./resolvers/publicationResolver');
+const publicationTypeSchema = require('./types/publicationType');
 
 const schema = {
     typeDefs: [
-        userTypeSchema,
+        userTypeSchema, publicationTypeSchema
     ],
     resolvers: [
-        userResolver, 
+        userResolver, publicationResolver
     ],
 };
 

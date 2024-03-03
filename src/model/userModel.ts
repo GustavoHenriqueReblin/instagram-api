@@ -43,7 +43,7 @@ export const getFollowSuggestions = async (userId: number) => {
         'ORDER BY COUNT(*) DESC ' +
         'LIMIT 10 ';
     const [user] = await Conn.execute(query, [userId]);
-    return user as User;
+    return user as User[];
 };
 
 // export const createUser = async (user: User) => {
