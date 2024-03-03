@@ -3,22 +3,47 @@ import { Conn } from '../db/Conn';
 import { generateToken } from '../helper/userHelper';
 
 export const getUser = async (email: string, password: string) => {
-    const query = 'SELECT * FROM `user` WHERE email = ? AND password = SHA1(?) LIMIT 1';
-    const [user] = await Conn.execute(query, [email, password]);
+    const newPassword = '(*)INSTA' + password + 'INSTA(*)';
+    const query = 
+        'SELECT u.*, p.`name` FROM `user` u ' +
+        'INNER JOIN `person` p ON p.`id` = u.`personId` ' +
+        'WHERE u.`email` = ? AND u.`password` = SHA1(?) LIMIT 1';
+    const [user] = await Conn.execute(query, [email, newPassword]);
     const userWithToken = await generateToken(user[0]);
     return userWithToken as User;
 };
 
 export const getUserById = async (id: number) => {
-    const query = 'SELECT * FROM `user` WHERE id = ? LIMIT 1';
+    const query = 
+        'SELECT u.*, p.`name` FROM `user` u ' +
+        'INNER JOIN `person` p ON p.`id` = u.`personId` ' +
+        'WHERE u.`id` = ? LIMIT 1';
     const [user] = await Conn.execute(query, [id]);
     return user[0] as User;
 };
 
 export const getUserByToken = async (token: string) => {
-    const query = 'SELECT * FROM `user` WHERE token = ? LIMIT 1';
+    const query = 
+        'SELECT u.*, p.`name` FROM `user` u ' + 
+        'INNER JOIN `person` p ON p.`id` = u.`personId` ' +
+        'WHERE u.`token` = ? LIMIT 1';
     const [user] = await Conn.execute(query, [token]);
     return user[0] as User;
+};
+
+export const getFollowSuggestions = async (userId: number) => {
+    const query = 
+        'SELECT unotf.*, p.`name` FROM `follow` f ' +
+        'INNER JOIN `user` u ON u.`id` = f.`idUserFollowed` ' + 
+        'INNER JOIN `follow` notf ON notf.`idUser` = u.`id` ' +
+        'INNER JOIN `user` unotf ON unotf.`id` = notf.`idUserFollowed` ' +
+        'INNER JOIN `person` p ON p.`id` = unotf.`personId` ' + 
+        'WHERE f.idUser = ? ' +
+        'GROUP BY unotf.id ' +
+        'ORDER BY COUNT(*) DESC ' +
+        'LIMIT 10 ';
+    const [user] = await Conn.execute(query, [userId]);
+    return user as User;
 };
 
 // export const createUser = async (user: User) => {
@@ -29,35 +54,42 @@ export const getUserByToken = async (token: string) => {
 // };
 
 export const updateUser = async (user: User) => {
-    const { id, email, name, password, token } = user;
-    let query = 'UPDATE `user` SET ';
+    const { id, personId, email, name, password, token } = user;
+    let queryUser = 'UPDATE `user` SET ';
+    let queryPerson = 'UPDATE `person` SET ';
 
-    const toUpdate: string[] = [];
-    const queryParams: any[] = [];
+    const toUserUpdate: string[] = [];
+    const toPersonUpdate: string[] = [];
+    const queryUserParams: any[] = [];
+    const queryPersonParams: any[] = [];
 
     if (email !== undefined) {
-        toUpdate.push('email = ?');
-        queryParams.push(email);
+        toUserUpdate.push('email = ?');
+        queryUserParams.push(email);
     }
 
     if (name !== undefined) {
-        toUpdate.push('name = ?');
-        queryParams.push(name);
+        toPersonUpdate.push('name = ?');
+        queryPersonParams.push(name);
     }
 
     if (password !== undefined) {
-        toUpdate.push('password = ?');
-        queryParams.push(password);
+        toUserUpdate.push('password = ?');
+        queryUserParams.push(password);
     }
 
     if (token !== undefined) {
-        toUpdate.push('token = ?');
-        queryParams.push(token);
+        toUserUpdate.push('token = ?');
+        queryUserParams.push(token);
     }
     
-    query += toUpdate.join(', ') + ' WHERE id = ?';
-    queryParams.push(id);
+    queryUser += toUserUpdate.join(', ') + ' WHERE id = ?';
+    queryUserParams.push(id);
+
+    queryPerson += toPersonUpdate.join(', ') + ' WHERE id = ?';
+    queryPersonParams.push(personId);
     
-    const userUpdated = await Conn.execute(query, queryParams);
+    await Conn.execute(queryPerson, queryPersonParams);
+    const userUpdated = await Conn.execute(queryUser, queryUserParams);
     return userUpdated[0].affectedRows > 0;
 };

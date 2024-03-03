@@ -1,4 +1,4 @@
-import { getUser, getUserById, getUserByToken, updateUser } from '../../model/userModel';
+import { getFollowSuggestions, getUser, getUserById, getUserByToken, updateUser } from '../../model/userModel';
 import { User } from '../../types';
 const jwt = require('jsonwebtoken');
 
@@ -26,6 +26,7 @@ const userResolver = {
                     
                     return {
                         data: user ? [user] : [],
+                        error: '',
                         message: '',
                     };
                 } catch (error) {
@@ -33,12 +34,22 @@ const userResolver = {
                     console.error(message + ' ' + error);
                     return { 
                         data: [], 
+                        error,
                         message,
-                        error
                     };
                 }
             }
         },
+
+        getFollowSuggestions: async (_: any, { input }: any) => {
+            const { id } = input;
+            const users = await getFollowSuggestions(id);
+            return {
+                data: users ? users : [],
+                error: '',
+                message: '',
+            };
+        }
     },
 
     Mutation: {

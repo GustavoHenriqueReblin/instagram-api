@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 const userType = gql`
     type User {
         id: ID!
+        personId: ID!
         name: String
         email: String!
         password: String!
@@ -11,6 +12,7 @@ const userType = gql`
 
     input UserInput {
         id: ID
+        personId: ID
         name: String
         email: String
         password: String
@@ -26,6 +28,7 @@ const userType = gql`
     type Query {
         user(input: UserInput!): UserResponse!,
         getUserByToken(input: UserInput!): UserResponse!
+        getFollowSuggestions(input: UserInput!): UserResponse!
     }
 
     type Mutation {
