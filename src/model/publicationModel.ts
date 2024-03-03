@@ -13,7 +13,7 @@ export const getPublications = async (userId: number) => {
         'WHERE p.`userId` IN ( ' +
             'SELECT f.`idUserFollowed` FROM `follow` f ' +
             'WHERE f.`idUser` = ? ' +
-        ') AND p.`dateTime` BETWEEN (CURDATE() - 2) AND NOW() AND pv.`view` IS NULL';
+        ') AND p.`dateTime` BETWEEN (CURDATE() - 2) AND NOW() AND pv.`view` IS NULL LIMIT 5';
     const [publications] = await Conn.execute(query, [userId, userId]);
     return publications as Publication[];
 };
@@ -30,4 +30,15 @@ export const getLikes = async (publicationIds: number[]) => {
     const ids = publicationIds.join(',');
     const [likes] = await Conn.execute(query, [ids]);
     return likes as Like[];
+};
+
+export const updateUserView = async (userId: number, publicationIds: number[]) => {
+    let query;
+    for (let i = 0; i <= publicationIds.length - 1; i++) {
+        query = 
+            'INSERT INTO publication_view (publicationId, userId, view) ' +
+            `VALUES(${publicationIds[i]}, ${userId}, 1) ` + 
+            `ON DUPLICATE KEY UPDATE publicationId=${publicationIds[i]}, userId=${userId}, view = 1`;
+        await Conn.execute(query);
+    }
 };

@@ -1,4 +1,4 @@
-import { getComments, getLikes, getPublications } from '../../model/publicationModel';
+import { getComments, getLikes, getPublications, updateUserView } from '../../model/publicationModel';
 
 const publicationResolver = {
     Query: {
@@ -21,6 +21,9 @@ const publicationResolver = {
                     likes: pubLikes
                 };
             });
+
+            updateUserView(userId, Ids)
+                .then(() => {console.log("Visualização das publicações atualizadas com sucesso!")});
             
             return {
                 data: publications,
