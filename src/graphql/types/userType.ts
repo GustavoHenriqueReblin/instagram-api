@@ -4,19 +4,21 @@ const userType = gql`
     type User {
         id: ID!
         personId: ID!
-        name: String
+        username: String
         email: String!
         password: String!
         token: String
+        name: String!
     }
 
     input UserInput {
         id: ID
         personId: ID
-        name: String
+        username: String
         email: String
         password: String
         token: String
+        name: String
     }
 
     type UserResponse {

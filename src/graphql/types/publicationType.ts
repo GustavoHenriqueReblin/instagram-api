@@ -7,6 +7,9 @@ const publicationType = gql`
         id: ID!
         userId: ID!
         publicationId: ID!
+        username: String!
+        name: String!
+        photoURL: String!
     }
 
     type Comment {
@@ -15,6 +18,19 @@ const publicationType = gql`
         publicationId: ID!
         dateTime: DateTime!
         description: String!
+        username: String!
+        photoURL: String!
+        commentsReply: [CommentReply!]
+    }
+
+    type CommentReply {
+        id: ID!
+        userId: ID!
+        commentId: ID!
+        dateTime: DateTime!
+        description: String!
+        username: String!
+        photoURL: String!
     }
 
     type Publication {

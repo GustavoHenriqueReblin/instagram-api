@@ -27,6 +27,14 @@ export type Comment = {
     description: string
 };
 
+export type CommentReply = {
+    id: number,
+    userId: number,
+    commentId: number,
+    dateTime: Date,
+    description: string
+};
+
 export type Like = {
     id: number,
     userId: number,

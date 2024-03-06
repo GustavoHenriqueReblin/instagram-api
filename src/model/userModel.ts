@@ -68,6 +68,11 @@ export const updateUser = async (user: User) => {
         queryUserParams.push(email);
     }
 
+    if (email !== undefined) {
+        toUserUpdate.push('username = ?');
+        queryUserParams.push(email);
+    }
+
     if (name !== undefined) {
         toPersonUpdate.push('name = ?');
         queryPersonParams.push(name);
