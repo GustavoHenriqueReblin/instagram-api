@@ -3,9 +3,10 @@ import { Conn } from '../db/Conn';
 
 export const getPublications = async (userId: number) => {
     const query = 
-        'SELECT p.*, f.`url` AS fileUrl, u.`username`, c.`name` category ' +
+        'SELECT p.*, f.`url` AS fileUrl, u.`username`, c.`name` category, t.`name` AS `type` ' +
         'FROM `publication` p ' +
         'INNER JOIN `file` f ON f.id = p.fileId ' +
+        'INNER JOIN `type` t ON t.id = f.typeId ' + 
         'INNER JOIN `user` u ON u.id = p.userId ' +
         'INNER JOIN `person` pe ON pe.id = u.personId ' +
         'INNER JOIN `category` c ON c.id = p.categoryId ' +

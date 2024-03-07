@@ -16,7 +16,8 @@ export type Publication = {
     description: string,
     fileUrl: string,
     username: string, 
-    category: string
+    category: string,
+    type: string
 };
 
 export type Comment = {

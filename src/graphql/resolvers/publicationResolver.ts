@@ -36,7 +36,8 @@ const publicationResolver = {
                 };
             });
 
-            updateUserView(userId, IdsPublication)
+            const env = process.env.ENVIRONMENT;
+            env && env !== 'dev' && updateUserView(userId, IdsPublication)
                 .then(() => {console.log("Visualização das publicações atualizadas com sucesso!")});
             
             return {
