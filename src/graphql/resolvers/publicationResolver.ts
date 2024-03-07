@@ -1,7 +1,8 @@
 import { 
-    addPublicationLike, deletePublicationLike, getComments, getCommentsReply, getLikes, 
+    addPublicationLike, deletePublicationLike, getComments, getCommentsReply, getLike, getLikes, 
     getPublications, updateUserView 
 } from '../../model/publicationModel';
+import { defaultLikeValues } from '../../types';
 
 const publicationResolver = {
     Query: {
@@ -51,9 +52,9 @@ const publicationResolver = {
 
     Mutation: {
         addPublicationLike: async (_: any, { input }: any, __: any) => {
-            const affectedRows = await addPublicationLike(input);
-            const message = affectedRows ? 'Like registrado com sucesso!' : '';
-            return message;
+            const insertedId = await addPublicationLike(input);
+            const like = await getLike(insertedId);
+            return like ? like[0] : defaultLikeValues;
         },
         deletePublicationLike: async (_: any, { input }: any, __: any) => {
             const { id } = input;

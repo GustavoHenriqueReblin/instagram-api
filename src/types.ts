@@ -63,6 +63,12 @@ export const defaultUserValues: User = {
     token: ''
 };
 
+export const defaultLikeValues: Like = {
+    id: -1,
+    userId: -1,
+    publicationId: -1,
+}
+
 export const defaultPublicationValues: Publication = {
     id: -1,
     categoryId: -1,

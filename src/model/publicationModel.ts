@@ -50,6 +50,16 @@ export const getLikes = async (publicationIds: number[]) => {
     return likes as Like[];
 };
 
+export const getLike = async (likeId: number[]) => {
+    const query = 
+        'SELECT l.*, LOWER(u.`username`) username, p.`name`, u.photoURL FROM `like` l ' +
+        'INNER JOIN `user` u ON u.id = l.userId ' +
+        'INNER JOIN `person` p ON p.id = u.personId ' +
+        'WHERE l.id = ?';
+    const [like] = await Conn.execute(query, [likeId]);
+    return like as Like[];
+};
+
 export const updateUserView = async (userId: number, publicationIds: number[]) => {
     const conn = await Conn.getConnection();
     try {
@@ -72,7 +82,7 @@ export const updateUserView = async (userId: number, publicationIds: number[]) =
 };
 
 export const addPublicationLike = async (like: Like) => {
-    let affectedRows;
+    let insertId;
     const conn = await Conn.getConnection();
     try {
         await conn.beginTransaction();
@@ -81,14 +91,14 @@ export const addPublicationLike = async (like: Like) => {
             VALUES (?, ?) 
             ON DUPLICATE KEY UPDATE userId = VALUES(userId), publicationId = VALUES(publicationId)
         `;
-        affectedRows = await conn.execute(query, [like.userId, like.publicationId]);
+        [{ insertId }] = await conn.execute(query, [like.userId, like.publicationId]);
         await conn.commit();
     } catch (error) {
         await conn.rollback();
         console.error('Erro ao inserir `likes`: ', error);
     } finally {
         conn.release();
-        return affectedRows;
+        return insertId;
     }
 };
 

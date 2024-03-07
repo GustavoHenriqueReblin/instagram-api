@@ -70,7 +70,7 @@ const publicationType = gql`
     }
 
     type Mutation {
-        addPublicationLike(input: LikeInput!): String,
+        addPublicationLike(input: LikeInput!): Like,
         deletePublicationLike(input: LikeInput!): String,
     }
 `;
