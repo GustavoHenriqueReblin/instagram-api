@@ -1,5 +1,6 @@
 import { 
-    getComments, getCommentsReply, getLikes, getPublications, updateUserView 
+    addPublicationLike, deletePublicationLike, getComments, getCommentsReply, getLikes, 
+    getPublications, updateUserView 
 } from '../../model/publicationModel';
 
 const publicationResolver = {
@@ -47,6 +48,20 @@ const publicationResolver = {
             }
         },
     },
+
+    Mutation: {
+        addPublicationLike: async (_: any, { input }: any, __: any) => {
+            const affectedRows = await addPublicationLike(input);
+            const message = affectedRows ? 'Like registrado com sucesso!' : '';
+            return message;
+        },
+        deletePublicationLike: async (_: any, { input }: any, __: any) => {
+            const { id } = input;
+            const affectedRows = await deletePublicationLike(id);
+            const message = affectedRows ? 'Like removido com sucesso!' : 'Like não encontrado!';
+            return message;
+        },
+    }
   };
   
   module.exports = publicationResolver;

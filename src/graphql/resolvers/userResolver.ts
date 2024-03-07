@@ -1,5 +1,5 @@
 import { getFollowSuggestions, getUser, getUserById, getUserByToken, updateUser } from '../../model/userModel';
-import { User } from '../../types';
+import { defaultUserValues, User } from '../../types';
 const jwt = require('jsonwebtoken');
 
 const userResolver = {
@@ -58,11 +58,7 @@ const userResolver = {
             const user = affectedRows && await getUserById(input.id);
             
             const message = user ? 'Usuário atualizado com sucesso!' : 'Usuário não encontrado!';
-            const data = user ? [user] : [{
-                id: -1, 
-                email: '',
-                password: ''
-            } as User];
+            const data = user ? [user] : [defaultUserValues];
             
             return {
                 data: data,

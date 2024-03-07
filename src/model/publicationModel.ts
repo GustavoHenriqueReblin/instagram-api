@@ -51,12 +51,60 @@ export const getLikes = async (publicationIds: number[]) => {
 };
 
 export const updateUserView = async (userId: number, publicationIds: number[]) => {
-    let query;
-    for (let i = 0; i <= publicationIds.length - 1; i++) {
-        query = 
-            'INSERT INTO publication_view (publicationId, userId, view) ' +
-            `VALUES(${publicationIds[i]}, ${userId}, 1) ` + 
-            `ON DUPLICATE KEY UPDATE publicationId=${publicationIds[i]}, userId=${userId}, view = 1`;
-        await Conn.execute(query);
+    const conn = await Conn.getConnection();
+    try {
+        await conn.beginTransaction();
+        for (let i = 0; i < publicationIds.length; i++) {
+            const query = `
+                INSERT INTO \`publication_view\` (publicationId, userId, view) 
+                VALUES (?, ?, 1)
+                ON DUPLICATE KEY UPDATE publicationId= VALUES(publicationId), userId= VALUES(userId), view = 1
+            `;
+            await conn.execute(query, [publicationIds[i], userId]);
+        }
+        await conn.commit();
+    } catch (error) {
+        await conn.rollback();
+        console.error('Erro ao atualizar publication_view: ', error);
+    } finally {
+        conn.release();
+    }
+};
+
+export const addPublicationLike = async (like: Like) => {
+    let affectedRows;
+    const conn = await Conn.getConnection();
+    try {
+        await conn.beginTransaction();
+        const query = `
+            INSERT INTO \`like\` (userId, publicationId) 
+            VALUES (?, ?) 
+            ON DUPLICATE KEY UPDATE userId = VALUES(userId), publicationId = VALUES(publicationId)
+        `;
+        affectedRows = await conn.execute(query, [like.userId, like.publicationId]);
+        await conn.commit();
+    } catch (error) {
+        await conn.rollback();
+        console.error('Erro ao inserir `likes`: ', error);
+    } finally {
+        conn.release();
+        return affectedRows;
+    }
+};
+
+export const deletePublicationLike = async (likeId: number) => {
+    let affectedRows;
+    const conn = await Conn.getConnection();
+    try {
+        await conn.beginTransaction();
+        const query = 'DELETE FROM `like` WHERE id = ?';
+        affectedRows = await conn.execute(query, [likeId]);
+        await conn.commit();
+    } catch (error) {
+        await conn.rollback();
+        console.error('Erro ao deletar `likes`: ', error);
+    } finally {
+        conn.release();
+        return affectedRows;
     }
 };

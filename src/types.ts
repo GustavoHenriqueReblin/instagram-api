@@ -17,7 +17,9 @@ export type Publication = {
     fileUrl: string,
     username: string, 
     category: string,
-    type: string
+    type: string,
+    likes: Like[],
+    comments: Comment[],
 };
 
 export type Comment = {
@@ -50,4 +52,28 @@ export type Story = {
     view: number,
     fileUrl: string,
     username: string, 
+};
+
+export const defaultUserValues: User = {
+    id: -1, 
+    personId: -1,
+    email: '',
+    password: '',
+    name: '',
+    token: ''
+};
+
+export const defaultPublicationValues: Publication = {
+    id: -1,
+    categoryId: -1,
+    category: '',
+    comments: [{ id: -1, description: '', publicationId: -1, userId: -1, dateTime: new Date() }],
+    description: '',
+    fileId: -1,
+    fileUrl: '',
+    likes: [{ id: -1, publicationId: -1, userId: -1 }],
+    type: '',
+    userId: -1,
+    username: '',
+    dateTime: new Date()
 };

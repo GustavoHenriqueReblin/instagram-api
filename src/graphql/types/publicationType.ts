@@ -53,6 +53,12 @@ const publicationType = gql`
         categoryId: ID
     }
 
+    input LikeInput {
+        id: ID!
+        userId: ID
+        publicationId: ID
+    }
+
     type PublicationResponse {
         data: [Publication]
         message: String
@@ -61,6 +67,11 @@ const publicationType = gql`
 
     type Query {
         publications(input: PublicationInput!): PublicationResponse!,
+    }
+
+    type Mutation {
+        addPublicationLike(input: LikeInput!): String,
+        deletePublicationLike(input: LikeInput!): String,
     }
 `;
 

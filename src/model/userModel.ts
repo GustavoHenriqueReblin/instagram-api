@@ -54,47 +54,58 @@ export const getFollowSuggestions = async (userId: number) => {
 // };
 
 export const updateUser = async (user: User) => {
-    const { id, personId, email, name, password, token } = user;
-    let queryUser = 'UPDATE `user` SET ';
-    let queryPerson = 'UPDATE `person` SET ';
+    const conn = await Conn.getConnection();
+    let userUpdated;
+    try {
+        const { id, personId, email, name, password, token } = user;
+        let queryUser = 'UPDATE `user` SET ';
+        let queryPerson = 'UPDATE `person` SET ';
 
-    const toUserUpdate: string[] = [];
-    const toPersonUpdate: string[] = [];
-    const queryUserParams: any[] = [];
-    const queryPersonParams: any[] = [];
+        const toUserUpdate: string[] = [];
+        const toPersonUpdate: string[] = [];
+        const queryUserParams: any[] = [];
+        const queryPersonParams: any[] = [];
 
-    if (email !== undefined) {
-        toUserUpdate.push('email = ?');
-        queryUserParams.push(email);
+        if (email !== undefined) {
+            toUserUpdate.push('email = ?');
+            queryUserParams.push(email);
+        }
+
+        if (email !== undefined) {
+            toUserUpdate.push('username = ?');
+            queryUserParams.push(email);
+        }
+
+        if (name !== undefined) {
+            toPersonUpdate.push('name = ?');
+            queryPersonParams.push(name);
+        }
+
+        if (password !== undefined) {
+            toUserUpdate.push('password = ?');
+            queryUserParams.push(password);
+        }
+
+        if (token !== undefined) {
+            toUserUpdate.push('token = ?');
+            queryUserParams.push(token);
+        }
+        
+        queryUser += toUserUpdate.join(', ') + ' WHERE id = ?';
+        queryUserParams.push(id);
+
+        queryPerson += toPersonUpdate.join(', ') + ' WHERE id = ?';
+        queryPersonParams.push(personId);
+
+        await conn.beginTransaction();
+        await Conn.execute(queryPerson, queryPersonParams);
+        userUpdated = await Conn.execute(queryUser, queryUserParams);
+        await conn.commit();
+    } catch (error) {
+        await conn.rollback();
+        console.error('Erro ao atualizar `user` ou `person`: ', error);
+    } finally {
+        conn.release();
+        return userUpdated[0].affectedRows > 0;
     }
-
-    if (email !== undefined) {
-        toUserUpdate.push('username = ?');
-        queryUserParams.push(email);
-    }
-
-    if (name !== undefined) {
-        toPersonUpdate.push('name = ?');
-        queryPersonParams.push(name);
-    }
-
-    if (password !== undefined) {
-        toUserUpdate.push('password = ?');
-        queryUserParams.push(password);
-    }
-
-    if (token !== undefined) {
-        toUserUpdate.push('token = ?');
-        queryUserParams.push(token);
-    }
-    
-    queryUser += toUserUpdate.join(', ') + ' WHERE id = ?';
-    queryUserParams.push(id);
-
-    queryPerson += toPersonUpdate.join(', ') + ' WHERE id = ?';
-    queryPersonParams.push(personId);
-    
-    await Conn.execute(queryPerson, queryPersonParams);
-    const userUpdated = await Conn.execute(queryUser, queryUserParams);
-    return userUpdated[0].affectedRows > 0;
 };
