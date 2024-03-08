@@ -1,4 +1,4 @@
-import { Publication, Comment, Like, CommentReply } from '../types';
+import { Publication, Comment, Like, CommentReply, defaultLikeValues } from '../types';
 import { Conn } from '../db/Conn';
 
 export const getPublications = async (userId: number) => {
@@ -20,33 +20,36 @@ export const getPublications = async (userId: number) => {
 };
 
 export const getComments = async (publicationIds: number[]) => {
+    const paramsIds = publicationIds.map((id) => {return id}).join(',');
     const query = 
         'SELECT c.*, u.`username`, u.`photoURL` FROM `comment` c ' +
         'INNER JOIN `user` u ON u.id = c.userId ' +
-        'WHERE c.publicationId IN (?)';
-    const ids = publicationIds.join(',');
-    const [comments] = await Conn.execute(query, [ids]);
+        `WHERE c.publicationId IN ( ${paramsIds || 0} )`;
+    const [comments] = await Conn.execute(query);
     return comments as Comment[];
 };
 
 export const getCommentsReply = async (commentIds: number[]) => {
+    const paramsIds = commentIds.map((id) => {return id}).join(',');
+    console.log(paramsIds);
     const query = 
         'SELECT cr.*, u.`username`, u.`photoURL` FROM comment_reply cr ' +
         'INNER JOIN `user` u ON u.id = cr.userId ' +
-        'WHERE cr.commentId IN (?)';
-    const ids = commentIds.join(',');
-    const [commentsReply] = await Conn.execute(query, [ids]);
+        `WHERE cr.commentId IN ( ${paramsIds || 0} )`;
+    const [commentsReply] = await Conn.execute(query);
     return commentsReply as CommentReply[];
 };
 
 export const getLikes = async (publicationIds: number[]) => {
+    const paramsIds = publicationIds.map((id) => {return id}).join(',');
+    console.log(paramsIds);
+    
     const query = 
         'SELECT l.*, LOWER(u.`username`) username, p.`name`, u.photoURL FROM `like` l ' +
         'INNER JOIN `user` u ON u.id = l.userId ' +
         'INNER JOIN `person` p ON p.id = u.personId ' +
-        'WHERE l.publicationId IN (?)';
-    const ids = publicationIds.join(',');
-    const [likes] = await Conn.execute(query, [ids]);
+        `WHERE l.publicationId IN ( ${paramsIds || 0} )`;
+    const [likes] = await Conn.execute(query);
     return likes as Like[];
 };
 

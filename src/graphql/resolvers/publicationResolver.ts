@@ -18,7 +18,7 @@ const publicationResolver = {
             }); 
             const commentsReply = await getCommentsReply(IdsComments);
             const likes = await getLikes(IdsPublication);
-
+            
             const publications = pubs.map((publication) => {
                 const pubComments = comments.filter((comment) => comment.publicationId === publication.id);
                 const pubLikes = likes.filter((like) => like.publicationId === publication.id);
