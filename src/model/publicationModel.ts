@@ -31,7 +31,6 @@ export const getComments = async (publicationIds: number[]) => {
 
 export const getCommentsReply = async (commentIds: number[]) => {
     const paramsIds = commentIds.map((id) => {return id}).join(',');
-    console.log(paramsIds);
     const query = 
         'SELECT cr.*, u.`username`, u.`photoURL` FROM comment_reply cr ' +
         'INNER JOIN `user` u ON u.id = cr.userId ' +
