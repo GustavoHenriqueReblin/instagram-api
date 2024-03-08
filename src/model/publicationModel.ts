@@ -42,8 +42,6 @@ export const getCommentsReply = async (commentIds: number[]) => {
 
 export const getLikes = async (publicationIds: number[]) => {
     const paramsIds = publicationIds.map((id) => {return id}).join(',');
-    console.log(paramsIds);
-    
     const query = 
         'SELECT l.*, LOWER(u.`username`) username, p.`name`, u.photoURL FROM `like` l ' +
         'INNER JOIN `user` u ON u.id = l.userId ' +
