@@ -20,6 +20,7 @@ export type Publication = {
     type: string,
     likes: Like[],
     comments: Comment[],
+    views: number
 };
 
 export type Comment = {
@@ -54,6 +55,11 @@ export type Story = {
     username: string, 
 };
 
+export type View = {
+    publicationId: number
+    viewCount: number | null
+};
+
 export const defaultUserValues: User = {
     id: -1, 
     personId: -1,
@@ -81,5 +87,6 @@ export const defaultPublicationValues: Publication = {
     type: '',
     userId: -1,
     username: '',
-    dateTime: new Date()
+    dateTime: new Date(),
+    views: 0
 };

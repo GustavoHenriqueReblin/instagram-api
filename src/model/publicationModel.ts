@@ -1,4 +1,4 @@
-import { Publication, Comment, Like, CommentReply, defaultLikeValues } from '../types';
+import { Publication, Comment, Like, CommentReply, defaultLikeValues, View } from '../types';
 import { Conn } from '../db/Conn';
 
 export const getPublications = async (userId: number) => {
@@ -48,6 +48,15 @@ export const getLikes = async (publicationIds: number[]) => {
         `WHERE l.publicationId IN ( ${paramsIds || 0} )`;
     const [likes] = await Conn.execute(query);
     return likes as Like[];
+};
+
+export const getViews = async (publicationIds: number[]) => {
+    const paramsIds = publicationIds.map((id) => {return id}).join(',');
+    const query = 
+        `SELECT pv.\`publicationId\`, COUNT(*) AS \`viewCount\` FROM publication_view pv 
+        WHERE pv.publicationId IN (${paramsIds || 0}) GROUP BY pv.publicationId`;
+    const [views] = await Conn.execute(query);
+    return views as View[];
 };
 
 export const getLike = async (likeId: number[]) => {

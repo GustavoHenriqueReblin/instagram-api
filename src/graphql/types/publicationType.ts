@@ -46,6 +46,7 @@ const publicationType = gql`
         username: String!
         category: String!
         type: String!
+        views: Int
     }
 
     input PublicationInput {

@@ -1,6 +1,6 @@
 import { 
     addPublicationLike, deletePublicationLike, getComments, getCommentsReply, getLike, getLikes, 
-    getPublications, updateUserView 
+    getPublications, getViews, updateUserView 
 } from '../../model/publicationModel';
 import { defaultLikeValues } from '../../types';
 
@@ -18,10 +18,12 @@ const publicationResolver = {
             }); 
             const commentsReply = await getCommentsReply(IdsComments);
             const likes = await getLikes(IdsPublication);
+            const views = await getViews(IdsPublication);
             
             const publications = pubs.map((publication) => {
                 const pubComments = comments.filter((comment) => comment.publicationId === publication.id);
                 const pubLikes = likes.filter((like) => like.publicationId === publication.id);
+                const pubViews = views.filter((view) => view.publicationId === publication.id);
 
                 const commentsAndReplies = pubComments.map((pubComment) => {
                     const thisCommentsReply = commentsReply.filter((commentReply) => commentReply.commentId === pubComment.id);
@@ -33,6 +35,7 @@ const publicationResolver = {
             
                 return {
                     ...publication,
+                    views: pubViews.length > 0 ? pubViews[0].viewCount : 0,
                     comments: commentsAndReplies,
                     likes: pubLikes
                 };
