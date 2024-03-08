@@ -1,4 +1,4 @@
-import { Publication, Comment, Like, CommentReply, defaultLikeValues, View } from '../types';
+import { Publication, Comment, Like, CommentReply, defaultLikeValues, View, CommentLike } from '../types';
 import { Conn } from '../db/Conn';
 
 export const getPublications = async (userId: number) => {
@@ -37,6 +37,28 @@ export const getCommentsReply = async (commentIds: number[]) => {
         `WHERE cr.commentId IN ( ${paramsIds || 0} )`;
     const [commentsReply] = await Conn.execute(query);
     return commentsReply as CommentReply[];
+};
+
+export const getCommentsLikes = async (commentIds: number[]) => {
+    const paramsIds = commentIds.map((id) => {return id}).join(',');
+    const query = 
+        'SELECT l.*, LOWER(u.`username`) username, p.`name`, u.photoURL FROM `comment_like` l ' +
+        'INNER JOIN `user` u ON u.id = l.userId ' +
+        'INNER JOIN `person` p ON p.id = u.personId ' +
+        `WHERE l.\`commentId\` IN ( ${paramsIds || 0} )`;
+    const [commentsLikes] = await Conn.execute(query);
+    return commentsLikes as CommentLike[];
+};
+
+export const getCommentsReplyLikes = async (commentRelpyIds: number[]) => {
+    const paramsIds = commentRelpyIds.map((id) => {return id}).join(',');
+    const query = 
+        'SELECT l.*, LOWER(u.`username`) username, p.`name`, u.photoURL FROM `comment_like` l ' +
+        'INNER JOIN `user` u ON u.id = l.userId ' +
+        'INNER JOIN `person` p ON p.id = u.personId ' +
+        `WHERE l.\`commentReplyId\` IN ( ${paramsIds || 0} )`;
+    const [commentsReplyLikes] = await Conn.execute(query);
+    return commentsReplyLikes as CommentLike[];
 };
 
 export const getLikes = async (publicationIds: number[]) => {

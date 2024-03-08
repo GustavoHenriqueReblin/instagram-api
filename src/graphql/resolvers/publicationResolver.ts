@@ -1,6 +1,6 @@
 import { 
-    addPublicationLike, deletePublicationLike, getComments, getCommentsReply, getLike, getLikes, 
-    getPublications, getViews, updateUserView 
+    addPublicationLike, deletePublicationLike, getComments, getCommentsLikes, getCommentsReply, 
+    getCommentsReplyLikes, getLike, getLikes, getPublications, getViews, updateUserView 
 } from '../../model/publicationModel';
 import { defaultLikeValues } from '../../types';
 
@@ -9,16 +9,16 @@ const publicationResolver = {
         publications: async (_: any, { input }: any) => {
             const { userId } = input;
             const pubs = await getPublications(userId);
-            const IdsPublication = pubs.map((pub) => {
-                return pub.id;
-            });
-            const comments = await getComments(IdsPublication);
-            const IdsComments = comments.map((comment) => {
-                return comment.id;
-            }); 
-            const commentsReply = await getCommentsReply(IdsComments);
+            const IdsPublication = pubs.map((pub) => { return pub.id });
             const likes = await getLikes(IdsPublication);
+            const comments = await getComments(IdsPublication);
             const views = await getViews(IdsPublication);
+
+            const IdsComments = comments.map((comment) => { return comment.id }); 
+            const commentsReply = await getCommentsReply(IdsComments);
+            const IdsCommentsReply = commentsReply.map((commentReply) => { return commentReply.id });
+            const commentLikes = await getCommentsLikes(IdsComments);
+            const commentReplyLikes = await getCommentsReplyLikes(IdsCommentsReply);
             
             const publications = pubs.map((publication) => {
                 const pubComments = comments.filter((comment) => comment.publicationId === publication.id);
@@ -27,9 +27,21 @@ const publicationResolver = {
 
                 const commentsAndReplies = pubComments.map((pubComment) => {
                     const thisCommentsReply = commentsReply.filter((commentReply) => commentReply.commentId === pubComment.id);
+                    const thisCommentLikes = commentLikes.filter((commentLike) => commentLike.commentId === pubComment.id);
+
+                    const thisCommentsReplyAndLikes = thisCommentsReply.map((commentReply) => {
+                        const thiscommentReplyLikes = commentReplyLikes.filter((commentReplyLike) => commentReplyLike.commentReplyId === commentReply.id);
+
+                        return {
+                            ...commentReply,
+                            likes: thiscommentReplyLikes
+                        }
+                    });
+
                     return {
                         ...pubComment,
-                        commentsReply: thisCommentsReply
+                        likes: thisCommentLikes,
+                        commentsReply: thisCommentsReplyAndLikes
                     };
                 });
             

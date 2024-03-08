@@ -21,14 +21,27 @@ const publicationType = gql`
         username: String!
         photoURL: String!
         commentsReply: [CommentReply!]
+        likes: [CommentLike!]
     }
 
     type CommentReply {
         id: ID!
         userId: ID!
-        commentId: ID!
+        commentId: ID
+        commentReplyId: ID
         dateTime: DateTime!
         description: String!
+        username: String!
+        photoURL: String!
+        likes: [CommentLike!]
+    }
+
+    type CommentLike {
+        id: ID!
+        userId: ID!
+        commentId: ID
+        commentReplyId: ID
+        name: String!
         username: String!
         photoURL: String!
     }

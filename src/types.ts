@@ -31,18 +31,33 @@ export type Comment = {
     description: string
 };
 
+export type Like = {
+    id: number,
+    userId: number,
+    publicationId: number,
+    username: string,
+    name: string,
+    photoURL: string
+};
+
 export type CommentReply = {
     id: number,
     userId: number,
     commentId: number,
     dateTime: Date,
-    description: string
+    description: string,
+    username: string,
+    photoURL: string
 };
 
-export type Like = {
+export type CommentLike = {
     id: number,
     userId: number,
-    publicationId: number
+    commentReplyId: number,
+    commentId: number,
+    username: string,
+    name: string,
+    photoURL: string
 };
 
 export type Story = {
@@ -73,6 +88,9 @@ export const defaultLikeValues: Like = {
     id: -1,
     userId: -1,
     publicationId: -1,
+    name: '',
+    photoURL: '',
+    username: ''
 }
 
 export const defaultPublicationValues: Publication = {
@@ -83,7 +101,7 @@ export const defaultPublicationValues: Publication = {
     description: '',
     fileId: -1,
     fileUrl: '',
-    likes: [{ id: -1, publicationId: -1, userId: -1 }],
+    likes: [{ id: -1, publicationId: -1, userId: -1, name: '', photoURL: '', username: '' }],
     type: '',
     userId: -1,
     username: '',
