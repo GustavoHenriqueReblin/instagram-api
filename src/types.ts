@@ -1,6 +1,7 @@
 export type User = {
     id: number,
     personId: number,
+    username: string,
     name: string,
     email: string,
     password: string,
@@ -78,6 +79,7 @@ export type View = {
 export const defaultUserValues: User = {
     id: -1, 
     personId: -1,
+    username: '',
     email: '',
     password: '',
     name: '',

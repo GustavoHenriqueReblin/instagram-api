@@ -57,7 +57,7 @@ export const updateUser = async (user: User) => {
     const conn = await Conn.getConnection();
     let userUpdated;
     try {
-        const { id, personId, email, name, password, token } = user;
+        const { id, personId, email, username, name, password, token } = user;
         let queryUser = 'UPDATE `user` SET ';
         let queryPerson = 'UPDATE `person` SET ';
 
@@ -73,7 +73,7 @@ export const updateUser = async (user: User) => {
 
         if (email !== undefined) {
             toUserUpdate.push('username = ?');
-            queryUserParams.push(email);
+            queryUserParams.push(username);
         }
 
         if (name !== undefined) {
